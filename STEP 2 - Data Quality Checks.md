@@ -20,6 +20,7 @@ FROM superstoredata;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/7be598a5-7bfe-44cd-8211-9c4f3c3fd564" />
 
+
 Text NULLs & blanks
 ```sql
 /*Checking Text values in Source for NULLs and Blanks*/
