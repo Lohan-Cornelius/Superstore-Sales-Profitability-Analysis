@@ -15,7 +15,7 @@ FROM fact_table;
 
 ## Check 2 - Totals
 
-Next I compared total sales, total profit and total quantity between the raw table and the fact table, using the exact figures rather than rounded ones so that any precision issues would show up. Raw sales were [X] against [X] in the fact table, raw profit was [X] against [X], and raw quantity was [X] against [X]. [All three totals matched / The totals differed by X, which I traced to Y].
+Next I compared total sales, total profit and total quantity between the raw table and the fact table, using the exact figures rather than rounded ones so that any precision issues would show up. Raw sales were 2,297,200.86 against 2,297,200.86 in the fact table, raw profit was 286,397.02 against 286,397.02, and raw quantity was 37,873 against 37,873. All three totals match and Passed the check.
 
 ```sql
 /*Aggregating Totals from both the Raw - & fact Table*/
