@@ -1,5 +1,7 @@
 ## Check 1 - Rown Counts
-To confirm no rows were lost or duplicated during normalisation, I counted the rows in the raw superstoredata table and in fact_table. Each raw row is one order line, so the two counts should be identical. The raw table has 9994 rows and the fact table has 9994 rows, so the check passed.
+To confirm no rows were lost or duplicated during normalisation, I counted the rows in the raw superstoredata table and in fact_table. 
+Each raw row is one order line, so the two counts should be identical. The raw table has 9994 rows and the fact table has 9994 rows, 
+so the check passed.
 
 ```
 SELECT 
