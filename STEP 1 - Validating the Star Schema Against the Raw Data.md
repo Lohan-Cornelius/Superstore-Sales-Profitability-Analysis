@@ -9,6 +9,10 @@ Before analysing anything, I checked that the star schema I built from the raw s
 4. Duplicate dimension keys: every key in each dimension appears only once, so joins can't inflate totals.
 5. Dimension coverage: the dimensions hold the same distinct values as the raw table.
 
+All five checks passed. The raw superstoredata table remains my source of truth throughout the project.
+
+Note on scope: the raw data has no dates, order IDs, customer IDs or product names. These checks therefore cover row counts, totals, key integrity and dimension coverage, but nothing time-based or customer-based. The product dimension holds category and sub-category combinations, not individual products.
+
 ---
 
 ## Check 1 - Row Counts
