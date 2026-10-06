@@ -6,7 +6,7 @@ Negative profit is not treated as an error, because loss-making sales are part o
 ## Check 6 - NULLs and blanks
 I checked every column in the raw superstoredata table for missing values, because aggregate functions like SUM and AVG silently skip NULLs and would understate results. I ran two queries. The first tested the numeric columns (sales, quantity, discount and profit) and postal_code, which is stored as an integer, for NULLs only, since a number cannot be an empty string. The second tested the eight text columns (ship mode, segment, country, city, state, region, category and sub-category) for both NULLs and blank values, meaning empty strings or spaces-only entries. Out of 9994 rows, I found 0 NULLs across the numeric columns and postal_code, and 0 NULLs and 0 blanks across the text columns. No missing values were found.
 
-Numeric NULLs
+#### Numeric NULLs
 ```sql
 /*Checking Numeric Columns in Source for NULL Values*/
 SELECT 
@@ -21,7 +21,7 @@ FROM superstoredata;
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/7be598a5-7bfe-44cd-8211-9c4f3c3fd564" />
 
 
-Text NULLs & blanks
+#### Text NULLs & blanks
 ```sql
 /*Checking Text values in Source for NULLs and Blanks*/
 SELECT
@@ -49,7 +49,7 @@ FROM superstoredata;
 ## Check 7 - Numeric ranges
 I checked the minimum, maximum and average of sales, quantity, discount and profit to look for values that don't make sense, and then counted the rows that break each rule. Discount ranged from 0 to 0.8 (0% to 80%), quantity from 1 to 14, and sales from 0.44 to 22,638.48. Out of 9994 rows, there were 0 rows with zero or negative sales, 0 rows with a quantity below 1, and 0 rows with a discount outside the range 0 to 1. Profit ranged from -6599.98 to 8399.98, with an average of 28.66. 1871 rows (18.72%) had a negative profit and 65 rows had exactly zero profit. I kept the negative profit rows, because loss-making sales are part of the analysis and not a data error. No invalid values were found in sales, quantity or discount, so no rows were excluded.
 
-Query 1
+#### Query 1
 ```sql
 /*Calculating the range (MIN, MAX & AVG) of the numeric fields*/
 SELECT
@@ -70,7 +70,7 @@ FROM superstoredata;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/0b3f7e1e-8670-4794-932f-577a49e6b4ca" />
 
-Query 2
+#### Query 2
 ```sql
 /*Identifying key aspects of the data where the data isn't necessarily wrong but it is breaking rules*/
 SELECT
