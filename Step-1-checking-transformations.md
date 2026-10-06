@@ -177,3 +177,82 @@ SELECT
 FROM dim_shipping;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/7a2dfe79-a417-4aeb-865c-b06baaaa145c" />
+
+---
+
+# Check 5 - Dimension Coverage
+Finally, I compared the number of distinct customer segments, locations (unique combinations of city, state, postal code and region), product categories (category and sub-category combinations) and shipping modes in the raw superstoredata table with the number of rows in each dimension table. This confirms that no values were dropped or added during normalization. The raw data has 3 segments, 632 location combinations, 17 product combinations and 4 shipping modes, and the dimension tables hold 3 segments, 632 location combinations, 17 product combinations and 4 shipping modes respectively. All 4 matched.
+```sql
+/*CTE | Counting distinct combination from the raw table*/
+WITH raw_dis AS (
+SELECT
+	COUNT(DISTINCT segment) AS raw_seg_key,
+    COUNT(DISTINCT city, state, postal_code, region) AS raw_loc_key,
+    COUNT(DISTINCT category, sub_category) AS raw_prod_key,
+    COUNT(DISTINCT ship_mode) AS raw_ship_key
+FROM superstoredata
+),
+
+/*CTE | Counting total rows in the dimension tables*/
+dim_dis AS (
+SELECT
+	(SELECT COUNT(*) FROM dim_custsegment) AS seg_rows,
+    (SELECT COUNT(*) FROM dim_location) AS loc_rows,
+    (SELECT COUNT(*) FROM dim_products) AS prod_rows,
+    (SELECT COUNT(*) FROM dim_shipping) AS ship_rows
+)
+
+/*Main Query | Cross matching / Joining DISTINCT combination from the raw table and the dimension tables, checking if the totals match or not*/
+SELECT
+	'segment_dim' AS table_name,
+    raw_seg_key AS raw_distinct,
+    seg_rows AS dim_distinct,
+	CASE
+		WHEN raw_seg_key = seg_rows
+        THEN 'Match / Passed'
+        ELSE 'Mismatch / Failed'
+        END AS key_match
+FROM raw_dis, dim_dis
+
+UNION ALL
+
+SELECT 
+	'location_dim',
+    raw_loc_key,
+    loc_rows,
+    CASE
+		WHEN raw_loc_key = loc_rows
+        THEN 'Match / Passed'
+        ELSE 'Mismatch / Failed'
+        END
+FROM raw_dis, dim_dis
+
+UNION ALL
+
+SELECT 
+	'product_dim',
+    raw_prod_key,
+    prod_rows,
+    CASE
+		WHEN raw_prod_key = prod_rows
+        THEN 'Match / Passed'
+        ELSE 'Mismatch / Failed'
+        END
+FROM raw_dis, dim_dis
+
+UNION ALL
+
+SELECT 
+	'shipping_dim',
+    raw_ship_key,
+    ship_rows,
+    CASE
+		WHEN raw_ship_key = ship_rows
+        THEN 'Match / Passed'
+        ELSE 'Mismatch / Failed'
+        END
+FROM raw_dis, dim_dis
+;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/68a315a0-f0b5-4a58-b7d1-74406f829009" />
+
