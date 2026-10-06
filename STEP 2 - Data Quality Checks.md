@@ -3,6 +3,8 @@ Step 1 showed that the star schema matches the raw data. Step 2 asks whether the
 I checked for missing values, impossible numbers, inconsistent category labels, identical rows and extreme margins, and recorded what I decided to exclude and why. 
 Negative profit is not treated as an error, because loss-making sales are part of the analysis.
 
+---
+
 ## Check 6 - NULLs and blanks
 I checked every column in the raw superstoredata table for missing values, because aggregate functions like SUM and AVG silently skip NULLs and would understate results. I ran two queries. The first tested the numeric columns (sales, quantity, discount and profit) and postal_code, which is stored as an integer, for NULLs only, since a number cannot be an empty string. The second tested the eight text columns (ship mode, segment, country, city, state, region, category and sub-category) for both NULLs and blank values, meaning empty strings or spaces-only entries. Out of 9994 rows, I found 0 NULLs across the numeric columns and postal_code, and 0 NULLs and 0 blanks across the text columns. No missing values were found.
 
@@ -46,6 +48,8 @@ FROM superstoredata;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/69bd71d4-6db3-4b2e-8e55-a06585596dbb" />
 
+---
+
 ## Check 7 - Numeric ranges
 I checked the minimum, maximum and average of sales, quantity, discount and profit to look for values that don't make sense, and then counted the rows that break each rule. Discount ranged from 0 to 0.8 (0% to 80%), quantity from 1 to 14, and sales from 0.44 to 22,638.48. Out of 9994 rows, there were 0 rows with zero or negative sales, 0 rows with a quantity below 1, and 0 rows with a discount outside the range 0 to 1. Profit ranged from -6599.98 to 8399.98, with an average of 28.66. 1871 rows (18.72%) had a negative profit and 65 rows had exactly zero profit. I kept the negative profit rows, because loss-making sales are part of the analysis and not a data error. No invalid values were found in sales, quantity or discount, so no rows were excluded.
 
@@ -84,3 +88,90 @@ SELECT
 FROM superstoredata;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/48e2fea1-116a-406a-b5f6-643394106398" />
+
+---
+
+## Check 8: Category values and consistency
+
+I counted the distinct values in each text column, both as stored and after trimming spaces. There are 3 segments, 4 ship modes, 4 regions, 3 categories, 17 sub-categories, 49 states and 1 country, and the trimmed and untrimmed counts matched in every column. I also checked the relationships between columns: each sub-category belongs to exactly one category, and each state belongs to exactly one region. I found no conflicts. Country contains only one value, so it adds nothing to the analysis.
+
+#### Query 1
+```sql
+/*This query is to check unique text values*/
+SELECT 
+	'shipping' AS column_name,
+	COUNT(DISTINCT ship_mode) AS text_distinct,
+    COUNT(DISTINCT TRIM(ship_mode)) AS text_trimmed
+FROM superstoredata
+UNION ALL
+SELECT 
+	'segment',
+	COUNT(DISTINCT segment),
+    COUNT(DISTINCT TRIM(segment))
+FROM superstoredata
+UNION ALL
+SELECT 
+	'country',
+	COUNT(DISTINCT country),
+    COUNT(DISTINCT TRIM(country))
+FROM superstoredata
+UNION ALL
+SELECT 
+	'city',
+	COUNT(DISTINCT city),
+    COUNT(DISTINCT TRIM(city))
+FROM superstoredata
+UNION ALL
+SELECT 
+	'state',
+	COUNT(DISTINCT state),
+    COUNT(DISTINCT TRIM(state))
+FROM superstoredata
+UNION ALL
+SELECT 
+	'region',
+	COUNT(DISTINCT region),
+    COUNT(DISTINCT TRIM(region))
+FROM superstoredata
+UNION ALL
+SELECT 
+	'category',
+	COUNT(DISTINCT category),
+    COUNT(DISTINCT TRIM(category))
+FROM superstoredata
+UNION ALL
+SELECT 
+	'sub_category',
+	COUNT(DISTINCT sub_category),
+    COUNT(DISTINCT TRIM(sub_category))
+FROM superstoredata;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/8810b2bc-2309-4208-ba9e-57c9f81c3490" />
+
+#### Query 2
+```sql
+/*Checking that a sub_category belongs to 1 category*/
+SELECT 
+	sub_category,
+    COUNT(DISTINCT category) AS category_count
+FROM superstoredata
+	GROUP BY
+		sub_category
+	HAVING category_count > 1;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/e2b071b2-e26f-407b-86b0-a88f6299369c" />
+
+#### Query 3
+```sql
+/*Checking that a state belongs to 1 region*/
+SELECT
+	state,
+    COUNT(DISTINCT region) AS region_count
+FROM superstoredata
+	GROUP BY
+		state
+	HAVING region_count > 1;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/12a06f85-9a55-4440-98cd-094403dc6b59" />
+
+
