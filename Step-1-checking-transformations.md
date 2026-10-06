@@ -1,3 +1,14 @@
+# STEP 1 - Validating the Star Schema Against the Raw Data
+Before analysing anything, I checked that the star schema I built from the raw superstoredata table (a fact table plus customer segment, location, product category and shipping dimensions) holds exactly the same data as the source. If the normalised tables lost, duplicated or mis-linked any rows, every later result would be wrong, so I validated the transformation first.
+
+### I ran five checks:
+
+1. Row counts: the fact table has the same number of rows as the raw table.
+2. Totals: total sales, profit and quantity match between the two.
+3. Orphaned fact rows: every fact row links to a record in each dimension.
+4. Duplicate dimension keys: every key in each dimension appears only once, so joins can't inflate totals.
+5. Dimension coverage: the dimensions hold the same distinct values as the raw table.
+
 ## Check 1 - Row Counts
 To confirm no rows were lost or duplicated during normalisation, I counted the rows in the raw superstoredata table and in fact_table. 
 Each raw row is one order line, so the two counts should be identical. The raw table has 9994 rows and the fact table has 9994 rows, 
