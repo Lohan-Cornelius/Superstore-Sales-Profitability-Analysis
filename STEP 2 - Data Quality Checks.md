@@ -45,3 +45,41 @@ FROM superstoredata;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/69bd71d4-6db3-4b2e-8e55-a06585596dbb" />
 
+## Check 7 - Numeric ranges
+I checked the minimum, maximum and average of sales, quantity, discount and profit to look for values that don't make sense, and then counted the rows that break each rule. Discount ranged from 0 to 0.8 (0% to 80%), quantity from 1 to 14, and sales from 0.44 to 22,638.48. Out of 9994 rows, there were 0 rows with zero or negative sales, 0 rows with a quantity below 1, and 0 rows with a discount outside the range 0 to 1. Profit ranged from -6599.98 to 8399.98, with an average of 28.66. 1871 rows (18.72%) had a negative profit and 65 rows had exactly zero profit. I kept the negative profit rows, because loss-making sales are part of the analysis and not a data error. No invalid values were found in sales, quantity or discount, so no rows were excluded.
+
+Query 1
+```sql
+/*Calculating the range (MIN, MAX & AVG) of the numeric fields*/
+SELECT
+	COUNT(*) AS total_rows,
+	MIN(sales) AS min_sales,
+    MAX(sales) AS max_sales,
+    ROUND(AVG(sales), 2) AS avg_sales,
+    MIN(quantity) AS min_quantity,
+    MAX(quantity) AS max_quantity,
+    ROUND(AVG(quantity), 2) AS avg_quantity,
+    MIN(discount) AS min_discount,
+    MAX(discount) AS max_discount,
+    ROUND(AVG(discount), 2) AS avg_discount,
+    MIN(profit) AS min_profit,
+    MAX(profit) AS max_profit,
+    ROUND(AVG(profit), 2) AS avg_profit
+FROM superstoredata;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/0b3f7e1e-8670-4794-932f-577a49e6b4ca" />
+
+Query 2
+```sql
+/*Identifying key aspects of the data where the data isn't necessarily wrong but it is breaking rules*/
+SELECT
+	COUNT(*) AS total_rows,
+    (SELECT COUNT(*) FROM superstoredata WHERE sales <= 0) AS sales_zero_or_below,
+    (SELECT COUNT(*) FROM superstoredata WHERE quantity < 1) AS quantity_below_1,
+    (SELECT COUNT(*) FROM superstoredata WHERE discount > 1 OR discount < 0) AS discount_out_of_range,
+    (SELECT COUNT(*) FROM superstoredata WHERE profit = 0) AS zero_profit_rows,
+    (SELECT COUNT(*) FROM superstoredata WHERE profit < 0) AS neg_prof_rows,
+    ROUND((SELECT COUNT(*) FROM superstoredata WHERE profit < 0) / (SELECT COUNT(*) FROM superstoredata) * 100, 2) AS neg_prof_pct
+FROM superstoredata;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/48e2fea1-116a-406a-b5f6-643394106398" />
