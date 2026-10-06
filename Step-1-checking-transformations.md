@@ -119,3 +119,61 @@ FROM row_id_count;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/c317f540-4b07-42c1-a293-97899419d210" />
 
+---
+
+## Check 4 - Duplicate Dimension Keys
+Duplicate keys in a dimension table would inflate sales and profit totals in any later join, so I checked that every key in each of the four dimension tables appears only once. For each dimension, I compared the total number of rows with the number of distinct keys. The segment dimension has 3 rows and 3 distinct keys, location has 632 and 632, product has 17 and 17, and shipping has 4 and 4. No duplicates were found across all dimensions.
+
+```sql
+/*Using UNION ALL to check if the total rows in the dimension tables matches the DISTINCT id per entry*/
+SELECT 
+	'dim_custsegment' AS table_name,
+    COUNT(*) AS total_rows,
+    COUNT(DISTINCT segment_id) AS distinct_keys,
+	CASE 
+		WHEN COUNT(*) = COUNT(DISTINCT segment_id)
+        THEN 'Match / Passed'
+        ELSE 'Mismatch / Failed'
+	END AS test_result
+FROM dim_custsegment
+
+UNION ALL
+
+SELECT 
+	'dim_location',
+    COUNT(*) AS total_rows,
+    COUNT(DISTINCT location_id) AS distinct_keys,
+	CASE 
+		WHEN COUNT(*) = COUNT(DISTINCT location_id)
+        THEN 'Match / Passed'
+        ELSE 'Mismatch / Failed'
+	END
+FROM dim_location
+
+UNION ALL
+
+SELECT 
+	'dim_products',
+    COUNT(*) AS total_rows,
+    COUNT(DISTINCT product_id) AS distinct_keys,
+	CASE 
+		WHEN COUNT(*) = COUNT(DISTINCT product_id)
+        THEN 'Match / Passed'
+        ELSE 'Mismatch / Failed'
+	END
+FROM dim_products
+
+UNION ALL
+
+SELECT 
+	'dim_shipping',
+    COUNT(*) AS total_rows,
+    COUNT(DISTINCT shipping_id) AS distinct_keys,
+	CASE 
+		WHEN COUNT(*) = COUNT(DISTINCT shipping_id)
+        THEN 'Match / Passed'
+        ELSE 'Mismatch / Failed'
+	END
+FROM dim_shipping;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/7a2dfe79-a417-4aeb-865c-b06baaaa145c" />
