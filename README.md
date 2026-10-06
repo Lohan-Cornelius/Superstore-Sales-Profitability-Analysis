@@ -1,4 +1,4 @@
-#Superstore Sales & Profitability Analysis
+#Superstore Sales & Profitability Analysis#
 
 This project analyses the Superstore retail dataset to answer practical business questions about growth, profitability and discounting. The raw data was normalised in MySQL into a star schema (a fact table with customer segment, location, product and shipping dimensions), then validated against the source table to confirm row counts and totals matched.
 
