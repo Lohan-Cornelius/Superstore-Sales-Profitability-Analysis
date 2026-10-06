@@ -1,7 +1,5 @@
-## Check 1 
-* Counting the rows in the raw superstoredata table and the rows in fact_table. 
-* They should be identical, because each row in the raw data is one order line. 
-* If the numbers differ, note by how much, since that's the first clue to where rows were lost or duplicated.
+## Check 1 - Rown Counts
+To confirm no rows were lost or duplicated during normalisation, I counted the rows in the raw superstoredata table and in fact_table. Each raw row is one order line, so the two counts should be identical. The raw table has 9994 rows and the fact table has 9994 rows, so the check passed.
 
 ```
 SELECT 
