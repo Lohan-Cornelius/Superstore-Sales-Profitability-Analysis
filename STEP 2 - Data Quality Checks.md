@@ -22,6 +22,7 @@ FROM superstoredata;
 
 Text NULLs & blanks
 ```sql
+/**Checking Text values in Source for NULLs and Blanks/
 SELECT
 	COUNT(*) AS total_rows,
 	(SELECT COUNT(*) FROM superstoredata WHERE ship_mode IS NULL) AS ship_nulls,
