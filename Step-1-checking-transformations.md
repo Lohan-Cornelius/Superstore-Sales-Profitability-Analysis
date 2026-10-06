@@ -3,7 +3,7 @@ To confirm no rows were lost or duplicated during normalisation, I counted the r
 Each raw row is one order line, so the two counts should be identical. The raw table has 9994 rows and the fact table has 9994 rows, 
 so the check passed.
 
-```
+```sql
 SELECT 
 	(SELECT COUNT(*) FROM superstoredata) AS count_source,
 	COUNT(*) AS count_fact
@@ -17,7 +17,7 @@ FROM fact_table;
 
 Next I compared total sales, total profit and total quantity between the raw table and the fact table, using the exact figures rather than rounded ones so that any precision issues would show up. Raw sales were [X] against [X] in the fact table, raw profit was [X] against [X], and raw quantity was [X] against [X]. [All three totals matched / The totals differed by X, which I traced to Y].
 
-```
+```sql
 /*Aggregating Totals from both the Raw - & fact Table*/
 WITH totals AS (
 SELECT 
