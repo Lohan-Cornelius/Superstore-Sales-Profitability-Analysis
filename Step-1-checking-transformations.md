@@ -10,4 +10,4 @@ SELECT
 FROM fact_table;
 
 ```
-<img width="730" height="421" alt="image" src="https://github.com/user-attachments/assets/bfcd2ce4-8c2f-41fa-8556-8460c2c93846" />
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/bfcd2ce4-8c2f-41fa-8556-8460c2c93846" />
