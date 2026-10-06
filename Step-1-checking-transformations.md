@@ -180,7 +180,7 @@ FROM dim_shipping;
 
 ---
 
-# Check 5 - Dimension Coverage
+## Check 5 - Dimension Coverage
 Finally, I compared the number of distinct customer segments, locations (unique combinations of city, state, postal code and region), product categories (category and sub-category combinations) and shipping modes in the raw superstoredata table with the number of rows in each dimension table. This confirms that no values were dropped or added during normalization. The raw data has 3 segments, 632 location combinations, 17 product combinations and 4 shipping modes, and the dimension tables hold 3 segments, 632 location combinations, 17 product combinations and 4 shipping modes respectively. All 4 matched.
 ```sql
 /*CTE | Counting distinct combination from the raw table*/
