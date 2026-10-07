@@ -16,7 +16,7 @@ These definitions apply to every number in the analysis that follows. All figure
 /*Grouping discounts into five bands: no discount, above 0 to below 25%, 25% to below 50%, 50% to below 75%, and 75% and above. Bands include their lower limit and exclude their upper limit, except no discount (exactly 0) and the top band (no upper limit).*/
 SELECT 
 	COUNT(*) AS total_rows,
-    (SELECT COUNT(*) FROM superstoredata WHERE discount >= 0.75 AND discount <= 1) AS disc_75_100,
+    (SELECT COUNT(*) FROM superstoredata WHERE discount >= 0.75) AS disc_75_100,
     (SELECT COUNT(*) FROM superstoredata WHERE discount >= 0.5 AND discount < 0.75) AS disc_50_75,
     (SELECT COUNT(*) FROM superstoredata WHERE discount >= 0.25 AND discount < 0.5) AS disc_25_50,
 	(SELECT COUNT(*) FROM superstoredata WHERE discount > 0 AND discount < 0.25) AS disc_1_25,
@@ -30,7 +30,7 @@ FROM superstoredata;
 WITH bands AS (
 SELECT 
 	COUNT(*) AS total_rows,
-    (SELECT COUNT(*) FROM superstoredata WHERE discount >= 0.75 AND discount <= 1) AS disc_75_100,
+    (SELECT COUNT(*) FROM superstoredata WHERE discount >= 0.75) AS disc_75_100,
     (SELECT COUNT(*) FROM superstoredata WHERE discount >= 0.5 AND discount < 0.75) AS disc_50_75,
     (SELECT COUNT(*) FROM superstoredata WHERE discount >= 0.25 AND discount < 0.5) AS disc_25_50,
 	(SELECT COUNT(*) FROM superstoredata WHERE discount > 0 AND discount < 0.25) AS disc_1_25,
