@@ -4,10 +4,10 @@ Step 1 showed that the star schema matches the raw data. Step 2 asked whether th
 What I found
 
 * Check 6, NULLs and blanks: I tested all 13 columns for NULLs and the 8 text columns for blank values. Out of 9,994 rows, I found 0 NULLs and 0 blanks.
-* Check 7, numeric ranges: Sales ranged from 0.44 to 22,638.48, quantity from 1 to 14, and discount from 0 to 0.8. No row had zero or negative sales, a quantity     below 1, or a discount outside 0 to 1.
-* Check 8, category consistency: There are 3 segments, 4 ship modes, 4 regions, 3 categories, 17 sub-categories, 49 states and 1 country. Every sub-category sits    under one category and every state under one region, so group totals will not be split or inflated.
-* Check 9, identical rows: I found 17 groups of identical rows, covering 34 rows, so 17 rows are excess. With no order ID, I can't tell whether they are duplicate   entries or genuine repeat purchases, so I kept them. The excess makes up 0.17% of rows and 0.04% of sales, so keeping them does not change any conclusion.
-* Check 10, margin sanity: No row has profit above sales. 1,871 rows (18.72%) have negative profit, and 349 rows (3.49%) have a margin below -100%, with the worst   row-level margin at -275%. I kept these rows because heavy losses are part of the analysis, not a data error. The overall margin (total profit divided by total    sales) is 12.47%.
+* Check 7, Numeric ranges: Sales ranged from 0.44 to 22,638.48, quantity from 1 to 14, and discount from 0 to 0.8. No row had zero or negative sales, a quantity     below 1, or a discount outside 0 to 1.
+* Check 8, Category consistency: There are 3 segments, 4 ship modes, 4 regions, 3 categories, 17 sub-categories, 49 states and 1 country. Every sub-category sits    under one category and every state under one region, so group totals will not be split or inflated.
+* Check 9, Identical rows: I found 17 groups of identical rows, covering 34 rows, so 17 rows are excess. With no order ID, I can't tell whether they are duplicate   entries or genuine repeat purchases, so I kept them. The excess makes up 0.17% of rows and 0.04% of sales, so keeping them does not change any conclusion.
+* Check 10, Margin sanity: No row has profit above sales. 1,871 rows (18.72%) have negative profit, and 349 rows (3.49%) have a margin below -100%, with the worst   row-level margin at -275%. I kept these rows because heavy losses are part of the analysis, not a data error. The overall margin (total profit divided by total    sales) is 12.47%.
 
 ---
 
