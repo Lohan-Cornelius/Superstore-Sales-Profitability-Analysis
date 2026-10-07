@@ -13,7 +13,7 @@ These definitions apply to every number in the analysis that follows. All figure
  
 ## 6 - Discount Bands
 ```sql
-/*Sorting the discount percentages into bands, (0, 1 - 25, 25 - 50, 50 - 75, 75 - 100) Excluding their upper limit*/
+/*Sorting the discount percentages into bands, (0, 1 - 25, 25 - 50, 50 - 75, 75 - 100) including their upper limit*/
 SELECT 
 	COUNT(*) AS total_rows,
     (SELECT COUNT(*) FROM superstoredata WHERE discount >= 0.75 AND discount <= 1) AS disc_75_100,
@@ -26,7 +26,7 @@ FROM superstoredata;
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/b18b3fd1-3f16-4629-956f-5a0087b9eb25" />
 
 ```sql
-/*Sorting the discount percentages into bands, (0, 1 - 25, 25 - 50, 50 - 75, 75 - 100) Excluding their upper limit*/
+/*Sorting the discount percentages into bands, (0, 1 - 25, 25 - 50, 50 - 75, 75 - 100) including their upper limit*/
 WITH bands AS (
 SELECT 
 	COUNT(*) AS total_rows,
@@ -38,7 +38,7 @@ SELECT
 FROM superstoredata
 )
 
-/*Using aboce CTE to calculate percentage od discounts offered across all discounts*/
+/*Using above CTE to calculate percentage of rows offered across all discounts*/
 SELECT 
 	ROUND((no_disc / total_rows) * 100, 2) AS pct_no_disc,
     ROUND((disc_1_25 / total_rows) * 100, 2) AS pct_1_25,
