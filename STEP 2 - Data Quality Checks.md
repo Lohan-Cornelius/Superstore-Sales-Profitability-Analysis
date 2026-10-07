@@ -272,6 +272,7 @@ SELECT
 FROM superstoredata;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/7bf9b1ea-b170-4955-83fe-8680c54d744f" />
+
 ```sql
 /*Checking for impossible values on the margin level*/
 SELECT
