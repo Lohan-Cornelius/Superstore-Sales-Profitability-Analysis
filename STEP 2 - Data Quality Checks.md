@@ -257,3 +257,35 @@ FROM superstoredata
 	FROM duplicates;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/57b3ff76-1e24-4e9d-a615-42a7dd0670ad" />
+
+---
+
+## Check 10 - Margin Sanity
+I calculated profit margin (profit divided by sales) for every row to look for extreme values. Row-level margins ranged from -275% to 50%. There were 0 rows with a margin above 100%, which would mean profit exceeds sales, and 349 rows (3.49% of table) with a margin below -100%, meaning the sale lost more than it brought in. Sales were above zero in every row (Check 7), so no division by zero was possible. No impossible margins were found. Across the whole table, total profit divided by total sales is 12.47%.
+```sql
+/*Calculating MIN, MAX and AVG margin percentage*/
+SELECT
+	COUNT(*) AS total_rows,
+	MIN((profit / sales) * 100) AS min_margin_pct,
+    ROUND(AVG((profit / sales) * 100), 2) AS avg_margin_pct,
+    MAX((profit / sales) * 100) AS max_margin_pct
+FROM superstoredata;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/7bf9b1ea-b170-4955-83fe-8680c54d744f" />
+```sql
+/*Checking for impossible values on the margin level*/
+SELECT
+	COUNT(*) AS total_rows,
+    (SELECT COUNT(*) FROM superstoredata WHERE ((profit / sales) * 100) > 100) AS margin_above_100,
+    (SELECT COUNT(*) FROM superstoredata WHERE ((profit / sales) * 100) < -100) AS margin_below_neg100
+FROM superstoredata;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/b9c8ae4b-cfe6-4ae5-ac67-017dff1baf81" />
+```sql
+/*Calculating total margin percentage*/
+SELECT 
+	ROUND(((SUM(profit) / SUM(sales)) * 100), 2) AS total_margin_pct
+FROM superstoredata;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/ee562c4b-7d90-4445-bd77-c40aeb54e7fc" />
+
