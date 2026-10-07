@@ -40,7 +40,7 @@ FROM
     fact_table AS ft
         LEFT JOIN
     dim_products AS dp ON ft.product_id = dp.product_id
-GROUP BY dp.category
+GROUP BY dp.category;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/535f4602-be69-45ba-b847-9192517aec4f" />
 
@@ -50,10 +50,10 @@ SELECT
     dp.category,
     dp.sub_category,
     ROUND(SUM(ft.sales), 2) cat_total_sales,
-    ROUND(SUM(ft.sales) / (SELECT SUM(sales) FROM fact_table) * 100, 2) AS cat_sales_total_pct,
-    ROUND(SUM(ft.profit), 2) AS cat_total_profit,
-    ROUND(SUM(ft.profit) / (SELECT SUM(profit) FROM fact_table) * 100, 2) AS cat_profit_total_pct,
-    ROUND((SUM(profit) / SUM(sales) * 100), 2) AS cat_margin,
+    ROUND(SUM(ft.sales) / (SELECT SUM(sales) FROM fact_table) * 100, 2) AS subcat_sales_total_pct,
+    ROUND(SUM(ft.profit), 2) AS subcat_total_profit,
+    ROUND(SUM(ft.profit) / (SELECT SUM(profit) FROM fact_table) * 100, 2) AS subcat_profit_total_pct,
+    ROUND((SUM(profit) / SUM(sales) * 100), 2) AS subcat_margin,
     RANK() OVER(ORDER BY SUM(ft.sales) DESC) AS sales_rank,
     RANK() OVER(ORDER BY SUM(ft.profit)DESC) AS profit_rank
 FROM
@@ -61,7 +61,39 @@ FROM
 		LEFT JOIN
 			dim_products AS dp 
             ON ft.product_id = dp.product_id
-GROUP BY dp.category, dp.sub_category
+GROUP BY dp.category, dp.sub_category;
 ```
-<img width="650" height="400" alt="image" src="https://github.com/user-attachments/assets/05d068b2-72b5-49c0-abbb-b6d8ef39544c" />
+<img width="650" height="400" alt="image" src="https://github.com/user-attachments/assets/95ce8d91-9f6b-4ef1-94a6-17b65c9e8a15" />
+
+---
+
+## Question 2: Which sub-categories lose money, and how much do those losses cost?
+
+Using the sub-category results, I identified the sub-categories whose total profit is below 0, which is my definition of loss-making from Step 3. 3 of the 17 sub-categories are loss-making: Supplies, Bookcases and Tables. Together they lose 22,387.14 on sales of 368,519.07 (16.04% of total sales), a combined margin of -6.07%. The largest loss is Tables at 17,725.48 on sales of 206,965.53 (margin -8.56%), which is 79.18% of all the losses. Without these losses, total profit would be 308,784.16 instead of 286,397.02, which is 7.82% higher. Tables makes a loss despite ranking 4th by sales, so it is a popular but loss-making line. Two of the three loss-making sub-categories, Tables and Bookcases, sit in Furniture, and Supplies sits in Office Supplies.
+
+### What it means: 
+The losses are modest against total profit but concentrated. The three loss-making sub-categories lose 22,387.14 combined, which is 7.82% of total profit of 286,397.02, and Tables alone accounts for 79.18% of that. Two of the three (Tables and Bookcases) sit in Furniture, and they explain its thin margin. Furniture's profit of 18,451.27 is Chairs (26,590.17) and Furnishings (13,059.14) less the 21,198.04 lost on Tables and Bookcases. Without those two sub-categories, Furniture's margin would be 9.44% instead of 2.49%, so the category's problem is two sub-categories, not the whole category.
+
+### Recommendation: 
+Review Tables first. It is among the top sellers by sales (check its overall rank against your full 17-row output), loses 8.56% of every sale, and its loss of 17,725.48 is almost as large as all of Furniture's profit. Then review Bookcases and Supplies, which lose smaller amounts. I will test in Question 3 whether heavy discounting is behind these losses before recommending a pricing change.
+
+```sql
+/*Sub Category Totals based on Sales and Profit where the sub category profit is less than 0*/
+SELECT 
+    dp.category,
+    dp.sub_category,
+    ROUND(SUM(ft.sales), 2) cat_total_sales,
+    ROUND(SUM(ft.sales) / (SELECT SUM(sales) FROM fact_table) * 100, 2) AS subcat_sales_total_pct,
+    ROUND(SUM(ft.profit), 2) AS subcat_total_profit,
+    ROUND(SUM(ft.profit) / (SELECT SUM(profit) FROM fact_table) * 100, 2) AS subcat_profit_total_pct,
+    ROUND((SUM(profit) / SUM(sales) * 100), 2) AS subcat_margin
+FROM fact_table AS ft
+		LEFT JOIN
+			dim_products AS dp 
+            ON ft.product_id = dp.product_id
+GROUP BY dp.category, dp.sub_category
+		HAVING subcat_total_profit < 0;
+```
+
+<img width="571" height="400" alt="image" src="https://github.com/user-attachments/assets/d4765eeb-eea2-48a3-9635-c849f03efd58" />
 
