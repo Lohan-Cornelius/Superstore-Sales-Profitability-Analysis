@@ -281,6 +281,7 @@ SELECT
 FROM superstoredata;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/b9c8ae4b-cfe6-4ae5-ac67-017dff1baf81" />
+
 ```sql
 /*Calculating total margin percentage*/
 SELECT 
