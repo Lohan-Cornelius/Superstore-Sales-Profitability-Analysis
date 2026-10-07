@@ -17,7 +17,7 @@ Note on scope: the raw data has no dates, order IDs, customer IDs or product nam
 
 ## Check 1 - Row Counts
 To confirm no rows were lost or duplicated during normalisation, I counted the rows in the raw superstoredata table and in fact_table. 
-Each raw row is one order line, so the two counts should be identical. The raw table has 9994 rows and the fact table has 9994 rows, 
+Each raw row is one sales record line, so the two counts should be identical. The raw table has 9994 rows and the fact table has 9994 rows, 
 so the check passed.
 
 ```sql
