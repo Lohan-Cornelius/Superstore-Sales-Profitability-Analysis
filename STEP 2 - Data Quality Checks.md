@@ -174,4 +174,42 @@ FROM superstoredata
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/12a06f85-9a55-4440-98cd-094403dc6b59" />
 
+---
 
+## Check 9 - Fully identical rows
+Because the table has no order ID, I checked for rows that are identical across every column. I found 17 groups of identical rows, covering 34 rows in total, which is 17 more rows than the number of groups. Without an order ID I can't tell whether these are duplicate entries or genuine repeat purchases of the same item, so I kept them.
+
+```sql
+SELECT 
+	COUNT(*) AS row_counts, 
+    ship_mode,
+	segment,
+	country,
+	city,
+	state,
+	postal_code,
+	region,
+	category,
+	sub_category,
+	sales,
+	quantity,
+	discount,
+	profit
+FROM superstoredata 
+	GROUP BY ship_mode, 
+			segment,
+            country,
+            city,
+            state,
+            postal_code,
+            region,
+            category,
+            sub_category,
+            sales,
+            quantity,
+            discount,
+            profit
+		HAVING row_counts > 1;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/2209582a-d4a0-4434-9118-d47e4d836623" />
+I kept all of the identical rows. The table has no order ID, date or customer ID, so there is no way to tell whether two matching rows are the same sale entered twice or two separate purchases of the same item. A match across all 13 columns, including sales, quantity, discount and profit to four decimal places, is also what you would expect when different customers buy the same low-priced item, and the groups I looked at were mostly small Paper sales. Removing rows I cannot prove are errors would also mean my totals no longer reconcile with the source table. The excess rows make up 0.17% of the table and 0.04% of total sales, so keeping them does not change any conclusion. The raw superstoredata table is unchanged. If the original order data could confirm that these are duplicates, I would remove them and re-run the analysis.
