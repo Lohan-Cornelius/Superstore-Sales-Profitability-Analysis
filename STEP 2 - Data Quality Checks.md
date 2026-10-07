@@ -105,7 +105,7 @@ FROM superstoredata;
 
 ---
 
-## Check 8: Category values and consistency
+## Check 8 - Category values and consistency
 
 I counted the distinct values in each text column, both as stored and after trimming spaces. There are 3 segments, 4 ship modes, 4 regions, 3 categories, 17 sub-categories, 49 states and 1 country, and the trimmed and untrimmed counts matched in every column. I also checked the relationships between columns: each sub-category belongs to exactly one category, and each state belongs to exactly one region. I found no conflicts. Country contains only one value, so it adds nothing to the analysis.
 
