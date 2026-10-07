@@ -47,6 +47,6 @@ SELECT
     ROUND((disc_75_100 / total_rows) * 100, 2) AS pct_75_100
 FROM bands;
 ```
-<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/615ae924-5cb2-46db-89c5-94fe74b52eec" />
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/c55a402d-c263-40e0-b518-17efbad2a670" />
 
 Nearly half of all rows (48.01%) have no discount, and a further 38.05% have a discount above 0% and below 25%. Only 13.94% of rows are discounted at 25% or more (4.71% in the 25% to below 50% band, 6.22% in the 50% to below 75% band and 3.00% at 75% and above), which is why I separated the heavier discount bands for the analysis.
