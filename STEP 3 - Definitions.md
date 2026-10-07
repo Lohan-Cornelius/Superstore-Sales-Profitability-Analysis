@@ -23,7 +23,7 @@ SELECT
     (SELECT COUNT(*) FROM superstoredata WHERE discount = 0) AS no_disc
 FROM superstoredata;
 ```
-<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/b18b3fd1-3f16-4629-956f-5a0087b9eb25" />
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/270e01df-1ef3-4acd-82d6-6a1bffda0d48" />
 
 ```sql
 /*Grouping discounts into five bands: no discount, above 0 to below 25%, 25% to below 50%, 50% to below 75%, and 75% and above. Bands include their lower limit and exclude their upper limit, except no discount (exactly 0) and the top band (no upper limit).*/
