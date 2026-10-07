@@ -1,4 +1,4 @@
-# Step 3: Definitions
+# Step 3 - Definitions
 These definitions apply to every number in the analysis that follows. All figures use the full table of 9,994 rows, and the raw superstoredata table is unchanged.
 
 1. Sales: the sum of the sales column. The dataset has no data dictionary, so I treat it as the revenue recorded for each row, and the currency is not stated. I      use the term "sales" rather than "revenue" throughout.
@@ -13,7 +13,7 @@ These definitions apply to every number in the analysis that follows. All figure
  
 ## 6 - Discount Bands
 ```sql
-/*Sorting the discount percentages into bands, (0, 1 - 25, 25 - 50, 50 - 75, 75 - 100) including their upper limit*/
+/*Grouping discounts into five bands: no discount, above 0 to below 25%, 25% to below 50%, 50% to below 75%, and 75% and above. Bands include their lower limit and exclude their upper limit, except no discount (exactly 0) and the top band (no upper limit).*/
 SELECT 
 	COUNT(*) AS total_rows,
     (SELECT COUNT(*) FROM superstoredata WHERE discount >= 0.75 AND discount <= 1) AS disc_75_100,
@@ -26,7 +26,7 @@ FROM superstoredata;
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/b18b3fd1-3f16-4629-956f-5a0087b9eb25" />
 
 ```sql
-/*Sorting the discount percentages into bands, (0, 1 - 25, 25 - 50, 50 - 75, 75 - 100) including their upper limit*/
+/*Grouping discounts into five bands: no discount, above 0 to below 25%, 25% to below 50%, 50% to below 75%, and 75% and above. Bands include their lower limit and exclude their upper limit, except no discount (exactly 0) and the top band (no upper limit).*/
 WITH bands AS (
 SELECT 
 	COUNT(*) AS total_rows,
@@ -48,3 +48,5 @@ SELECT
 FROM bands;
 ```
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/615ae924-5cb2-46db-89c5-94fe74b52eec" />
+
+Nearly half of all rows (48.01%) have no discount, and a further 38.05% have a discount above 0% and below 25%. Only 13.94% of rows are discounted at 25% or more (4.71% in the 25% to below 50% band, 6.22% in the 50% to below 75% band and 3.00% at 75% and above), which is why I separated the heavier discount bands for the analysis.
