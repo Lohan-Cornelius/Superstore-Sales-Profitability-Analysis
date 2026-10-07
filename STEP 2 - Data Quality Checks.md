@@ -1,4 +1,4 @@
-# STEP 2 - Data Quality Checks.md
+# STEP 2 - Data Quality Checks
 Step 1 showed that the star schema matches the raw data. Step 2 asked whether the raw superstoredata table is itself trustworthy enough to analyse. I ran five checks covering missing values, numeric ranges, category consistency, identical rows and margin sanity. The table is clean, and the only things worth flagging are a small set of identical rows and a large share of loss-making sales, which are findings rather than errors.
 
 ### What I found
