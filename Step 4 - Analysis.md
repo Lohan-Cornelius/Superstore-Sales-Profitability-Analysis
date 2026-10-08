@@ -101,13 +101,23 @@ GROUP BY dp.category, dp.sub_category
 
 ## Question 3: How much does discounting hurt profit, and at what discount level do sales turn unprofitable?
 
-I grouped every row into the five discount bands defined in Step 3 and calculated rows, total sales, total profit, margin, share of total sales, share of total profit and the percentage of loss-making rows for each band. Rows with no discount made [X] of sales at a margin of [X]%, and rows with a discount above 0% and below 25% made [X] at [X]%. Margin turns negative in the [band] band, where [X] rows made [X] in sales and lost [X], a margin of [X]%. The three bands at 25% and above hold [X]% of rows but account for [X]% of sales, and together lose [X]. [X]% of rows in the 25% to below 50% band are loss-making, against [X]% of rows with no discount. The five bands hold 4,798, 3,803, 471, 622 and 300 rows, which total 9,994, and their sales and profit reconcile to 2,297,200.86 and 286,397.02. [Check the exact discount values: the finer breakdown shows the turning point at [X]%.]
+I grouped every row into the five discount bands from Step 3 and calculated rows, sales, profit, margin, share of total sales, share of total profit and the percentage of loss-making rows (profit below 0) for each. Rows with no discount (4,798 rows) account for 47.36% of sales at a margin of 29.51%, and none of them lose money. Rows with a discount above 0% and below 25% (3,803 rows) have a margin of 11.91%, and 13.75% of them lose money. Margin turns negative in the 25% to below 50% band (471 rows) at -15.99%, with 90.45% of rows loss-making. It falls to -62.65% in the 50% to below 75% band (622 rows) and -180.03% in the 75% and above band (300 rows), where every row loses money. The bands reconcile to 9,994 rows, 2,297,200.86 in sales and 286,397.02 in profit.
+
+Shares of total profit can exceed 100% for profitable groups and be negative for loss-making ones, because total profit is the net of both. The no-discount rows earn 112.08% of total profit because the three heaviest bands lose 13.38%, 23.23% and 10.66% between them.
+
+### Exact discount levels
+
+I then grouped by the exact discount value. Margin is positive at 10% (16.61%, 94 rows), 15% (5.15%, 52 rows) and 20% (11.82%, 3,657 rows). It is negative at 30% (-10.05%, 227 rows) and at every level above it: -16.50% at 32%, -19.81% at 40%, -45.45% at 45%, -34.80% at 50%, -89.46% at 60%, -98.66% at 70% and -180.03% at 80%. No rows sit between 20% and 30%, so the turning point lies somewhere in that gap and the data can't place it more precisely. Several levels hold few rows (11 at 45%, 27 at 32%, 52 at 15%), so their individual margins should not be over-read.
+
+### Where the heavy discounts sit
+
+The 1,393 rows with a discount of 30% or more are 13.94% of rows and 15.79% of sales, but they lose 135,376.06 combined, a margin of -37.32%. Of the 1,871 loss-making rows in the table, 1,348 (72.05%) carry a discount of 30% or more, and the other 523 carry a smaller discount. The losses are concentrated: Binders (38,510.50), Tables (30,698.22) and Machines (29,555.35) account for 72.96% of them. The four Furniture sub-categories (Furnishings, Chairs, Bookcases and Tables) hold 542 of the heavily discounted rows and 54,477.76 (40.24%) of the loss. Binders is profitable overall (30,221.76), so heavy discounting is cutting into an otherwise profitable line. Tables and Bookcases lose money overall in Question 2, but their heavily discounted rows lose more than their total losses (30,698.22 against 17,725.48 for Tables, and 11,097.76 against 3,472.56 for Bookcases), so their remaining rows are profitable. Supplies has no rows at 30% or above, so heavy discounting does not explain its loss. Not every heavily discounted row loses money: the 9 Copiers rows at 40% earn a margin of 12.90%.
 
 ### What it means: 
-[one or two sentences: where profit falls away, whether the heavy bands lose money outright, and how much profit the heavy bands cost against the no-discount rows].
+Discounting is where the profit goes. No row sold without a discount loses money, and from 30% upwards most rows do. The 13.94% of rows at 30% or above lose an amount equal to nearly half of the profit the whole business earns (135,376.06 against 286,397.02). This is about six times the 22,387.14 lost across the three loss-making sub-categories in Question 2, so discount level is a bigger source of loss than sub-category choice. It also explains most of Furniture's thin margin from Question 1. The data shows an association, not a cause: it cannot show what prices or volumes would have been without the discounts, and Step 3 notes that it is unclear whether sales is before or after discount.
 
 ### Recommendation: 
-[one action tied to the numbers, such as a discount cap or approval threshold at the level where margin turns negative].
+Put an approval step on any discount above 20%, the highest level in this data where margin is still positive, and review discounts of 30% or more first on Binders, Tables and Machines. Treat the 135,376.06 as the size of the problem, not as profit that can be recovered, because cutting discounts could also reduce volumes. Review Supplies separately, since discounting does not explain its loss.
 
 ```sql
 /*Grouping rows into the five discount bands and calculating sales, profit, margin and loss-making rows per band*/
@@ -158,3 +168,24 @@ FROM fact_table AS ft
 
 <img width="750" height="400" alt="image" src="https://github.com/user-attachments/assets/ae5ca435-191b-46b7-9554-48be274cb453" />
 
+```sql
+/*Heavily discounted rows (30% and above) by sub-category: rows, sales, profit, margin and share of rows that lose money*/
+SELECT
+	COUNT(*) AS total_rows,
+    dp.category,
+    dp.sub_category,
+    ROUND(SUM(ft.sales), 2) AS total_sales,
+    ROUND(SUM(ft.sales) / (SELECT SUM(sales) FROM fact_table) * 100, 2) AS total_pct_of_sales,
+    ROUND(SUM(ft.profit), 2) AS total_profit,
+    ROUND(SUM(ft.profit) / (SELECT SUM(profit) FROM fact_table) * 100, 2) AS total_pct_of_profit,
+    ROUND((SUM(CASE WHEN ft.profit <  0 THEN 1 ELSE 0 END) / COUNT(*) * 100), 2) AS pct_profit_below_0,
+    ROUND((SUM(profit) / SUM(sales) * 100), 2) AS margin
+FROM fact_table AS ft
+	JOIN dim_products AS dp
+		ON ft.product_id = dp.product_id
+	WHERE ft.discount >= 0.30
+		GROUP BY category, sub_category
+			ORDER BY total_profit DESC;
+```
+
+<img width="750" height="400" alt="image" src="https://github.com/user-attachments/assets/8be4f429-da4f-4458-af6b-cc1e33ebca1d" />
