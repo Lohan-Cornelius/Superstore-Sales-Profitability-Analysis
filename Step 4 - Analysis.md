@@ -108,3 +108,53 @@ I grouped every row into the five discount bands defined in Step 3 and calculate
 
 ### Recommendation: 
 [one action tied to the numbers, such as a discount cap or approval threshold at the level where margin turns negative].
+
+```sql
+/*Grouping rows into the five discount bands and calculating sales, profit, margin and loss-making rows per band*/
+SELECT
+	COUNT(*) AS total_rows,
+    ROUND(SUM(ft.sales), 2) AS total_sales,
+    ROUND(SUM(ft.sales) / (SELECT SUM(sales) FROM fact_table) * 100, 2) AS total_pct_of_sales,
+    ROUND(SUM(ft.profit), 2) AS total_profit,
+    ROUND(SUM(ft.profit) / (SELECT SUM(profit) FROM fact_table) * 100, 2) AS total_pct_of_profit,
+    ROUND((SUM(CASE WHEN ft.profit <  0 THEN 1 ELSE 0 END) / COUNT(*) * 100), 2) AS pct_profit_below_0,
+    ROUND((SUM(profit) / SUM(sales) * 100), 2) AS band_margin,
+    CASE 
+		WHEN discount >= 0.75 THEN '5. Upper Band (75% and above)'
+        WHEN discount >= 0.5 AND discount < 0.75 THEN '4. Upper Middle Band (50 - 75%)'
+        WHEN discount >= 0.25 AND discount < 0.5 THEN '3. Lower Middle Band (25 - 50%)'
+        WHEN discount > 0 AND discount < 0.25 THEN '2. Lower Band(1 - 25%)'
+        ELSE '1. No Discount (0%)'
+        END AS disc_band
+FROM fact_table AS ft
+	GROUP BY disc_band
+		ORDER BY disc_band;
+```
+
+<img width="750" height="400" alt="image" src="https://github.com/user-attachments/assets/f1201304-05bc-4afe-981a-ae8c479fddcb" />
+
+```sql
+/*Grouping rows by the discount amount and calculating sales, profit, margin and loss-making rows per band */
+SELECT
+	COUNT(*) AS total_rows,
+    ROUND(SUM(ft.sales), 2) AS total_sales,
+    ROUND(SUM(ft.sales) / (SELECT SUM(sales) FROM fact_table) * 100, 2) AS total_pct_of_sales,
+    ROUND(SUM(ft.profit), 2) AS total_profit,
+    ROUND(SUM(ft.profit) / (SELECT SUM(profit) FROM fact_table) * 100, 2) AS total_pct_of_profit,
+    ROUND((SUM(CASE WHEN ft.profit <  0 THEN 1 ELSE 0 END) / COUNT(*) * 100), 2) AS pct_profit_below_0,
+    ROUND((SUM(profit) / SUM(sales) * 100), 2) AS band_margin,
+    (discount * 100)AS discount_pct,
+    CASE 
+		WHEN discount >= 0.75 THEN '5. Upper Band (75% and above)'
+        WHEN discount >= 0.5 AND discount < 0.75 THEN '4. Upper Middle Band (50 - 75%)'
+        WHEN discount >= 0.25 AND discount < 0.5 THEN '3. Lower Middle Band (25 - 50%)'
+        WHEN discount > 0 AND discount < 0.25 THEN '2. Lower Band(1 - 25%)'
+        ELSE '1. No Discount (0%)'
+        END AS disc_band
+FROM fact_table AS ft
+	GROUP BY discount
+		ORDER BY discount
+```
+
+<img width="750" height="400" alt="image" src="https://github.com/user-attachments/assets/ae5ca435-191b-46b7-9554-48be274cb453" />
+
