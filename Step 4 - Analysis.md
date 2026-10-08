@@ -75,8 +75,7 @@ Using the sub-category results, I identified the sub-categories whose total prof
 The losses are modest against total profit but concentrated. The three loss-making sub-categories lose 22,387.14 combined, which is 7.82% of total profit of 286,397.02, and Tables alone accounts for 79.18% of that. Two of the three (Tables and Bookcases) sit in Furniture, and they explain its thin margin. Furniture's profit of 18,451.27 is Chairs (26,590.17) and Furnishings (13,059.14) less the 21,198.04 lost on Tables and Bookcases. Without those two sub-categories, Furniture's margin would be 9.44% instead of 2.49%, so the category's problem is two sub-categories, not the whole category.
 
 ### Recommendation: 
-Review Tables first. It is among the top sellers by sales, it ranks 4th of 17 sub-categories by sales loses 8.56% of every sale, and its loss of 17,725.48 is almost as large as all of Furniture's profit. Then review Bookcases and Supplies, which lose smaller amounts. I will test in Question 3 whether heavy discounting is behind these losses before recommending a pricing change.
-
+Review Tables first. It ranks 4th of 17 sub-categories by sales, loses 8.56% of every sale, and its loss of 17,725.48 is almost as large as all of Furniture's profit (18,451.27).
 ```sql
 /*Sub Category Totals based on Sales and Profit where the sub category profit is less than 0*/
 SELECT 
