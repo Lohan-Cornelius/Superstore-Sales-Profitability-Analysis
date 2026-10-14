@@ -188,3 +188,104 @@ FROM fact_table AS ft
 ```
 
 <img width="750" height="400" alt="image" src="https://github.com/user-attachments/assets/8be4f429-da4f-4458-af6b-cc1e33ebca1d" />
+
+---
+## Question 4: Which regions and states perform best and worst on sales and on margin?
+
+I calculated total sales, total profit, margin, share of total sales, share of total profit and the percentage of loss-making rows for each of the 4 regions, then for each of the 49 states. By sales, West is the largest at 725,457.82 (31.58% of the total), and South is the smallest at 391,721.91. By margin, West is the best at 14.94% and Central the weakest at 7.92%, against an overall margin of 12.47%. The rankings differ West and East both rank 1st and 2nd in both sales and margin respectively, Central rank 3rd in sale and 4th in margin, South ranks 4th in sales but 3rd in margin. At state level, California makes the most sales at 457,687.63 and North Dakota the least at 919.91. District of Columbia has the best margin at 36.98% (on 10 rows) and Ohio the worst at -21.69% (on 469 rows). 10 of the 49 states are loss-making, losing -98,246.74 combined. The regions and states each reconcile to 2,297,200.86 in sales and 286,397.02 in profit.
+
+### What it means:
+[one or two sentences: whether performance is spread evenly across regions or driven by a few states, and whether the biggest markets are also the most profitable].
+
+### Recommendation:
+[one action tied to the numbers, for example which state or region to review first].
+
+```sql
+/*Calculating key aspects and stats per region*/
+SELECT 
+	COUNT(*) AS row_count,
+	dl.region AS region,
+    ROUND(SUM(ft.sales), 2) AS total_sales,
+    ROUND((SUM(ft.sales) / (SELECT SUM(sales) FROM fact_table) * 100), 2) AS pct_of_sales,
+    ROUND(SUM(ft.profit), 2) AS total_profit,
+    ROUND((SUM(ft.profit) / (SELECT SUM(profit) FROM fact_table) * 100), 2) AS pct_of_profit,
+    ROUND((SUM(ft.profit) / SUM(ft.sales) * 100), 2) AS margin,
+    ROUND((SUM(
+		CASE WHEN ft.profit < 0 THEN 1
+		ELSE 0
+        END 
+    ) / COUNT(*) * 100), 2) AS pct_profit_below_0
+FROM fact_table AS ft
+	LEFT JOIN dim_location AS dl
+		ON ft.location_id = dl.location_id
+GROUP BY dl.region
+	ORDER BY total_sales DESC;
+```
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/3987476e-6439-46b5-85d3-6f5a9bd0f6a2" />
+
+---
+
+```sql
+/*Calculating key aspects and stats per state*/
+SELECT 
+	COUNT(*) AS row_count,
+	dl.state AS state,
+    ROUND(SUM(ft.sales), 2) AS total_sales,
+    ROUND((SUM(ft.sales) / (SELECT SUM(sales) FROM fact_table) * 100), 2) AS pct_of_sales,
+    ROUND(SUM(ft.profit), 2) AS total_profit,
+    ROUND((SUM(ft.profit) / (SELECT SUM(profit) FROM fact_table) * 100), 2) AS pct_of_profit,
+    ROUND((SUM(ft.profit) / SUM(ft.sales) * 100), 2) AS margin,
+    ROUND((SUM(
+		CASE WHEN ft.profit < 0 THEN 1
+		ELSE 0
+        END 
+    ) / COUNT(*) * 100), 2) AS pct_profit_below_0,
+    RANK() OVER(ORDER BY SUM(ft.sales) DESC) AS sales_rank,
+    RANK() OVER(ORDER BY SUM(ft.profit) / SUM(ft.sales)DESC) AS margin_rank
+FROM fact_table AS ft
+	LEFT JOIN dim_location AS dl
+		ON ft.location_id = dl.location_id
+GROUP BY dl.state
+	ORDER BY total_sales DESC;
+```
+
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/e5b2ea29-a64d-4751-92de-e799016222aa" />
+
+---
+
+```sql
+/*Calculating key aspects and stats per state*/
+WITH state_level AS (
+SELECT 
+	COUNT(*) AS row_count,
+	dl.state AS state,
+    ROUND(SUM(ft.sales), 2) AS total_sales,
+    ROUND((SUM(ft.sales) / (SELECT SUM(sales) FROM fact_table) * 100), 2) AS pct_of_sales,
+    ROUND(SUM(ft.profit), 2) AS total_profit,
+    ROUND((SUM(ft.profit) / (SELECT SUM(profit) FROM fact_table) * 100), 2) AS pct_of_profit,
+    ROUND((SUM(ft.profit) / SUM(ft.sales) * 100), 2) AS margin,
+    ROUND((SUM(
+		CASE WHEN ft.profit < 0 THEN 1
+		ELSE 0
+        END 
+    ) / COUNT(*) * 100), 2) AS pct_profit_below_0,
+    RANK() OVER(ORDER BY SUM(ft.sales) DESC) AS sales_rank,
+    RANK() OVER(ORDER BY SUM(ft.profit) / SUM(ft.sales)DESC) AS margin_rank
+FROM fact_table AS ft
+	LEFT JOIN dim_location AS dl
+		ON ft.location_id = dl.location_id
+GROUP BY dl.state
+	ORDER BY margin DESC
+)
+
+/*To calculate the total loss making states and the value of the loss*/
+SELECT
+	COUNT(*) AS loss_making,
+    SUM(total_profit) AS loss_value
+FROM state_level
+	WHERE total_profit < 0;
+```
+
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/5811c88e-f47f-42ed-b911-94aa0616838e" />
+
+---
