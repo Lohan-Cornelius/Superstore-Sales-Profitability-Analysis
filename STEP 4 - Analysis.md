@@ -200,6 +200,7 @@ Ten of the 49 states are loss-making: Ohio, Colorado, Tennessee, Illinois, Texas
 ### Recommendation:
 Apply the 20% discount approval threshold from Question 3 in these ten states first, starting with Texas, Ohio, Illinois and Pennsylvania. Those four hold 2,533 rows and lose 70,868.59 combined, and 1,055 of their rows carry a discount of 30% or more. Then review Pennsylvania separately: its margin is still only 1.34% on rows below 30%, so heavy discounts do not explain all of its weakness, and its sub-category mix is worth checking. Treat the 98,246.74 as the size of the problem, not as profit that can be recovered, because cutting discounts could also reduce volumes.
 
+### Per Region
 ```sql
 /*Calculating key aspects and stats per region*/
 SELECT 
@@ -225,6 +226,7 @@ GROUP BY dl.region
 
 ---
 
+### Per State
 ```sql
 /*Calculating key aspects and stats per state*/
 SELECT 
@@ -253,6 +255,7 @@ GROUP BY dl.state
 
 ---
 
+### Per region & state, calculates margin on orders below 30% discount
 ```sql
 /*Calculating key aspects and stats per state*/
 WITH state_level AS (
