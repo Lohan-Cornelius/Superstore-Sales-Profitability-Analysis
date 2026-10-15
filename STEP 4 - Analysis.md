@@ -289,3 +289,39 @@ FROM state_level
 <img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/5811c88e-f47f-42ed-b911-94aa0616838e" />
 
 ---
+
+```sql
+/*Calculating key aspects and stats per region & State*/
+SELECT 
+	COUNT(*) AS row_count,
+	dl.region AS region,
+    dl.state AS state,
+    ROUND(SUM(ft.sales), 2) AS total_sales,
+    ROUND(SUM(ft.profit), 2) AS total_profit,
+    ROUND((SUM(ft.profit) / SUM(ft.sales) * 100), 2) AS margin,
+    ROUND(AVG(ft.discount) * 100, 2) AS avg_discount_pct,
+    ROUND((SUM(
+		CASE WHEN ft.discount >= 0.30 THEN 1
+		ELSE 0
+        END 
+    ) / COUNT(*) * 100), 2) AS pct_rows_30_plus,
+    ROUND((SUM(
+		CASE WHEN ft.discount < 0.30 THEN 1
+		ELSE 0
+        END 
+    ) / COUNT(*) * 100), 2) AS pct_rows_under_30,
+    ROUND(
+		SUM(CASE WHEN ft.discount < 0.30 THEN ft.profit
+			ELSE 0
+            END) /
+            SUM(CASE WHEN ft.discount < 0.30 THEN ft.sales
+            ELSE 0
+            END) * 100, 2) AS margin_below_30_discount
+FROM fact_table AS ft
+	LEFT JOIN dim_location AS dl
+		ON ft.location_id = dl.location_id
+GROUP BY dl.region, dl.state
+	ORDER BY margin ASC;
+```
+
+<img width="571" height="329" alt="image" src="https://github.com/user-attachments/assets/8de66171-9b3e-4368-8d92-32738ff5ef57" />
